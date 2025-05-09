@@ -1,0 +1,1636 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SF &amp; MLAN Sales Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .attribution-top {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 0;
+            overflow: hidden;
+        }
+        .section-title {
+            background-color: #0099cc;
+            color: white;
+            padding: 10px 15px;
+            margin: 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: normal;
+        }
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        input[type="number"] {
+            width: 100%;
+        }
+        .contract-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            font-size: 18px;
+            text-align: right;
+        }
+        .remove-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: inline-block;
+            width: auto;
+            text-align: center;
+        }
+        .add-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            margin: 15px;
+            display: inline-block;
+            width: auto;
+        }
+        .clear-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            float: right;
+        }
+        .summary-table {
+            margin-top: 20px;
+        }
+        .cost-type {
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .detailed-summary {
+            margin-top: 20px;
+            border-top: 2px solid #0099cc;
+            padding-top: 15px;
+        }
+        .detailed-summary h3 {
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+        .cart-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item .item-name {
+            font-weight: bold;
+        }
+        .cart-item .item-details {
+            color: #555;
+            font-size: 0.9em;
+        }
+        .cart-item .item-price {
+            float: right;
+            font-weight: bold;
+        }
+        .category-heading {
+            background-color: #f2f2f2;
+            padding: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .summary-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .auto-item {
+            background-color: #f8f8f8;
+        }
+        .auto-item-message {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .hidden {
+            display: none;
+        }
+        
+        /* Attribution style */
+        .attribution {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        /* Updated SmartFiber section styles */
+        .smartfiber-section table {
+            margin: 0;
+        }
+        .smartfiber-section th {
+            background-color: #f2f2f2;
+            padding: 10px;
+            font-weight: bold;
+        }
+        .smartfiber-section td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+        .smartfiber-section .remove-btn {
+            width: 100%;
+        }
+        .smartfiber-section select {
+            width: 100%;
+            padding: 8px;
+        }
+        .smartfiber-section input[type="number"] {
+            width: 100%;
+        }
+        
+        /* Dropdown styling to match reference */
+        .smartfiber-dropdown {
+            position: relative;
+        }
+        .smartfiber-dropdown select option {
+            padding: 10px;
+        }
+        .smartfiber-dropdown select optgroup {
+            font-weight: bold;
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+            th, td {
+                padding: 6px;
+            }
+            .section {
+                padding: 0;
+            }
+            .section-title {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>SF &amp; MLAN Sales Calculator</h1>
+        <div class="attribution-top">Made by Morten Pollestad</div>
+        
+        <div class="contract-selector">
+            <label for="contract-length"><strong>Contract Length:</strong></label>
+            <select id="contract-length" onchange="updateAllPrices()">
+                <option value="3">3 Years</option>
+                <option value="4">4 Years</option>
+                <option value="5">5 Years</option>
+            </select>
+        </div>
+        
+        <!-- Updated SmartFiber Section -->
+        <div class="section smartfiber-section">
+            <div class="section-title">SmartFiber</div>
+            <table id="smartfiber-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Agreement (Months)</th>
+                        <th>MRC (kr)</th>
+                        <th>OTC (kr)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="smartfiber-body">
+                    <!-- SmartFiber rows will be populated here -->
+                </tbody>
+            </table>
+            <button class="add-btn" id="add-smartfiber">Add SmartFiber</button>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Managed LAN Switches</div>
+            <table id="switches-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>OTC (kr)</th>
+                        <th>MRC (kr)</th>
+                        <th>Total OTC (kr)</th>
+                        <th>Total MRC (kr)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="switches-body">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+            <button class="add-btn" id="add-switch">Add Switch</button>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Managed Wi-Fi Access Points</div>
+            <table id="wifi-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>OTC (kr)</th>
+                        <th>MRC (kr)</th>
+                        <th>Total OTC (kr)</th>
+                        <th>Total MRC (kr)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="wifi-body">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+            <button class="add-btn" id="add-wifi">Add Wi-Fi Access Point</button>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">SLA (Service Level Agreement)</div>
+            <table id="sla-table">
+                <thead>
+                    <tr>
+                        <th>SLA Level</th>
+                        <th>Availability</th>
+                        <th>Service Hours</th>
+                        <th>Quantity</th>
+                        <th>MRC per unit (kr)</th>
+                        <th>Total MRC (kr)</th>
+                    </tr>
+                </thead>
+                <tbody id="sla-body">
+                    <tr>
+                        <td>
+                            <select id="sla-select" onchange="updateSLA()">
+                                <option value="">Select SLA Level</option>
+                                <option value="Gold24">Gold24</option>
+                                <option value="Gold">Gold</option>
+                                <option value="Silver24">Silver24</option>
+                                <option value="Silver">Silver</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Basic">Basic</option>
+                            </select>
+                        </td>
+                        <td id="sla-availability">-</td>
+                        <td id="sla-hours">-</td>
+                        <td id="sla-quantity">0</td>
+                        <td id="sla-price">0</td>
+                        <td id="sla-total">0</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="auto-item-message">SLA quantity is automatically set to match the total number of devices (switches + access points)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Additional Services</div>
+            <table id="services-table">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Quantity</th>
+                        <th>OTC (kr)</th>
+                        <th>MRC (kr)</th>
+                        <th>Total OTC (kr)</th>
+                        <th>Total MRC (kr)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="services-body">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+                <!-- Automatic Traffic Statistics Service -->
+                <tbody><tr class="auto-item">
+                    <td>Trafikkstatistikk</td>
+                    <td id="traffic-analysis-quantity">0</td>
+                    <td>0</td>
+                    <td>20</td>
+                    <td>0</td>
+                    <td id="traffic-analysis-total">0</td>
+                    <td><span class="auto-item-message">Auto</span></td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="auto-item-message">Trafikkstatistikk quantity is automatically set to match the number of Wi-Fi access points</td>
+                </tr>
+            </tbody></table>
+            <button class="add-btn" id="add-service">Add Service</button>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Order Summary</div>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Total Items</th>
+                        <th>Total OTC (kr)</th>
+                        <th>Total MRC (kr)</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-table-body">
+                    <tr id="smartfiber-summary-row" class="hidden">
+                        <td>SmartFiber</td>
+                        <td id="smartfiber-count">0</td>
+                        <td id="smartfiber-total-otc">0</td>
+                        <td id="smartfiber-total-mrc">0</td>
+                    </tr>
+                    <tr id="switches-summary-row" class="hidden">
+                        <td>Managed Switches</td>
+                        <td id="switches-count">0</td>
+                        <td id="switches-total-otc">0</td>
+                        <td id="switches-total-mrc">0</td>
+                    </tr>
+                    <tr id="wifi-summary-row" class="hidden">
+                        <td>Wi-Fi Access Points</td>
+                        <td id="wifi-count">0</td>
+                        <td id="wifi-total-otc">0</td>
+                        <td id="wifi-total-mrc">0</td>
+                    </tr>
+                    <tr id="sla-summary-row" class="hidden">
+                        <td>SLA</td>
+                        <td id="sla-count">0</td>
+                        <td id="sla-total-otc">0</td>
+                        <td id="sla-total-mrc">0</td>
+                    </tr>
+                    <tr id="services-summary-row" class="hidden">
+                        <td>Additional Services</td>
+                        <td id="services-count">0</td>
+                        <td id="services-total-otc">0</td>
+                        <td id="services-total-mrc">0</td>
+                    </tr>
+                    <tr id="traffic-summary-row" class="hidden">
+                        <td>Trafikkstatistikk</td>
+                        <td id="traffic-count">0</td>
+                        <td id="traffic-total-otc">0</td>
+                        <td id="traffic-total-mrc">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="detailed-summary">
+                <div class="summary-actions">
+                    <h3>Shopping Cart Details</h3>
+                    <button class="clear-btn" id="clear-cart">Clear Cart</button>
+                </div>
+                <div id="cart-items-container">
+                    <!-- Shopping cart items will be added dynamically -->
+                </div>
+            </div>
+            
+            <div class="total">
+                <div><span class="cost-type">One Time Cost (OTC):</span> <span id="grand-total-otc">0</span> kr</div>
+                <div><span class="cost-type">Monthly Recurring Charge (MRC):</span> <span id="grand-total-mrc">0</span> kr</div>
+            </div>
+        </div>
+        
+        <!-- Added attribution -->
+        <div class="attribution">Made by Morten Pollestad // Portfolio KRS</div>
+    </div>
+
+    <script>
+        // SmartFiber product data
+        const smartFiberProducts = [
+            { speed: '50', contract: 12, mrc: 2390, otc: 10000 },
+            { speed: '50', contract: 24, mrc: 1990, otc: 7500 },
+            { speed: '50', contract: 36, mrc: 1690, otc: 0 },
+            { speed: '50', contract: 48, mrc: 1590, otc: 0 },
+            { speed: '50', contract: 60, mrc: 1490, otc: 0 },
+            { speed: '100', contract: 12, mrc: 2490, otc: 10000 },
+            { speed: '100', contract: 24, mrc: 2090, otc: 7500 },
+            { speed: '100', contract: 36, mrc: 1790, otc: 0 },
+            { speed: '100', contract: 48, mrc: 1790, otc: 0 },
+            { speed: '100', contract: 60, mrc: 1690, otc: 0 },
+            { speed: '200', contract: 12, mrc: 2790, otc: 10000 },
+            { speed: '200', contract: 24, mrc: 2290, otc: 7500 },
+            { speed: '200', contract: 36, mrc: 2190, otc: 0 },
+            { speed: '200', contract: 48, mrc: 1990, otc: 0 },
+            { speed: '200', contract: 60, mrc: 1890, otc: 0 },
+            { speed: '300', contract: 12, mrc: 3190, otc: 10000 },
+            { speed: '300', contract: 24, mrc: 2790, otc: 7500 },
+            { speed: '300', contract: 36, mrc: 2490, otc: 0 },
+            { speed: '300', contract: 48, mrc: 2390, otc: 0 },
+            { speed: '300', contract: 60, mrc: 2190, otc: 0 },
+            { speed: '500', contract: 12, mrc: 4490, otc: 10000 },
+            { speed: '500', contract: 24, mrc: 3890, otc: 7500 },
+            { speed: '500', contract: 36, mrc: 3490, otc: 0 },
+            { speed: '500', contract: 48, mrc: 3290, otc: 0 },
+            { speed: '500', contract: 60, mrc: 3190, otc: 0 },
+            { speed: '1000', contract: 12, mrc: 5090, otc: 10000 },
+            { speed: '1000', contract: 24, mrc: 4390, otc: 7500 },
+            { speed: '1000', contract: 36, mrc: 3990, otc: 0 },
+            { speed: '1000', contract: 48, mrc: 3790, otc: 0 },
+            { speed: '1000', contract: 60, mrc: 3690, otc: 0 }
+        ];
+        
+        // Product data for switches, WiFi APs, and services - UPDATED with correct prices
+        const products = {
+            switches: [
+                { 
+                    id: 'SW10', 
+                    name: 'SW10 - CX6000 12G PoE+ 2SFP', 
+                    otc: 0,
+                    mrc: {
+                        '3': 419,
+                        '4': 339,
+                        '5': 299
+                    }
+                },
+                { 
+                    id: 'SW11', 
+                    name: 'SW11 - CX6000 24G PoE+ 4SFP', 
+                    otc: 0,
+                    mrc: {
+                        '3': 659,
+                        '4': 519,
+                        '5': 439
+                    }
+                },
+                { 
+                    id: 'SW12', 
+                    name: 'SW12 - CX6000 48G PoE+ 4SFP', 
+                    otc: 0,
+                    mrc: {
+                        '3': 919,
+                        '4': 719,
+                        '5': 599
+                    }
+                },
+                { 
+                    id: 'SW13', 
+                    name: 'SW13 - CX6000 24G 4SFP', 
+                    otc: 0,
+                    mrc: {
+                        '3': 449,
+                        '4': 369,
+                        '5': 309
+                    }
+                },
+                { 
+                    id: 'SW14', 
+                    name: 'SW14 - CX6000 48G 4SFP', 
+                    otc: 0,
+                    mrc: {
+                        '3': 629,
+                        '4': 499,
+                        '5': 419
+                    }
+                },
+                { 
+                    id: 'SW15', 
+                    name: 'SW15 - CX6020 12G PoE+ 2SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 689,
+                        '4': 549,
+                        '5': 459
+                    }
+                },
+                { 
+                    id: 'SW16', 
+                    name: 'SW16 - CX6020 24G PoE+ 4SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 1479,
+                        '4': 1159,
+                        '5': 969
+                    }
+                },
+                { 
+                    id: 'SW17', 
+                    name: 'SW17 - CX6020 48G PoE+ 4SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 2129,
+                        '4': 1649,
+                        '5': 1359
+                    }
+                },
+                { 
+                    id: 'SW18', 
+                    name: 'SW18 - CX6020 24G 4SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 1199,
+                        '4': 949,
+                        '5': 799
+                    }
+                },
+                { 
+                    id: 'SW19', 
+                    name: 'SW19 - CX6020 48G 4SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 1669,
+                        '4': 1299,
+                        '5': 1079
+                    }
+                },
+                { 
+                    id: 'SW1', 
+                    name: 'SW1 - 2930F 8G PoE+ 2SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 359,
+                        '4': 279,
+                        '5': 239
+                    }
+                },
+                { 
+                    id: 'SW3', 
+                    name: 'SW3 - 2930F 24G PoE+ 4SFP+', 
+                    otc: 0,
+                    mrc: {
+                        '3': 439,
+                        '4': 359,
+                        '5': 309
+                    }
+                },
+                { 
+                    id: 'SW6', 
+                    name: 'SW6 - 2930F 48G PoE+ 4SFP', 
+                    otc: 0,
+                    mrc: {
+                        '3': 1049,
+                        '4': 819,
+                        '5': 679
+                    }
+                },
+                { 
+                    id: 'SW21', 
+                    name: 'SW21 - CX6300M 24SFP+ 4SFP56', 
+                    otc: 0,
+                    mrc: {
+                        '3': 4809,
+                        '4': 3679,
+                        '5': 2999
+                    }
+                }
+            ],
+            // Updated Wi-Fi Access Points with correct prices from reference image
+            wifiAP: [
+                { 
+                    id: 'AP2', 
+                    name: 'AP2 HPE Aruba AP-505 (Innendørs)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 299,
+                        '4': 239,
+                        '5': 209
+                    }
+                },
+                { 
+                    id: 'AP3', 
+                    name: 'AP3 HPE Aruba AP-515 (Innendørs)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 409,
+                        '4': 319,
+                        '5': 269
+                    }
+                },
+                { 
+                    id: 'AP5', 
+                    name: 'AP5 HPE Aruba AP-565 (Utendørs)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 489,
+                        '4': 379,
+                        '5': 319
+                    }
+                },
+                { 
+                    id: 'AP6', 
+                    name: 'AP6 HPE Aruba AP-575 (Utendørs)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 699,
+                        '4': 539,
+                        '5': 449
+                    }
+                },
+                { 
+                    id: 'AP-MNT-D', 
+                    name: 'AP-MNT-D (AP-505, AP-515 tak/betongtak)', 
+                    otc: 119,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 
+                    id: 'AP-270-MNT-V1', 
+                    name: 'AP-270-MNT-V1 (AP-565, AP-575 Stang/Vegg land arm)', 
+                    otc: 619,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 
+                    id: 'AP-270-MNT-V2', 
+                    name: 'AP-270-MNT-V2 (AP-565, AP-575 Stang/Vegg land arm)', 
+                    otc: 519,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                }
+            ],
+            services: [
+                { 
+                    id: 'LAN/Wi-Fi', 
+                    name: 'Avansert autentisering', 
+                    otc: 20000,
+                    mrc: {
+                        '3': 20,
+                        '4': 20,
+                        '5': 20
+                    }
+                },
+                { 
+                    id: 'Wi-Fi', 
+                    name: 'Trafikkfiltrering av gjestenett', 
+                    otc: 0,
+                    mrc: {
+                        '3': 20,
+                        '4': 20,
+                        '5': 20
+                    }
+                },
+                { 
+                    id: 'Wi-Fi-SSID', 
+                    name: 'Ekstra SSID (3 stk følger med, maks 5 stk)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 20,
+                        '4': 20,
+                        '5': 20
+                    }
+                },
+                { 
+                    id: 'LAN', 
+                    name: 'Ekstra VLAN (3 stk følger med)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 20,
+                        '4': 20,
+                        '5': 20
+                    }
+                },
+                { 
+                    id: 'LAN-R', 
+                    name: 'Redundant og stacked switcher', 
+                    otc: 0,
+                    mrc: {
+                        '3': 90,
+                        '4': 90,
+                        '5': 90
+                    }
+                },
+                { 
+                    id: 'LAN-V', 
+                    name: 'Doble WAN porter (per switch)', 
+                    otc: 0,
+                    mrc: {
+                        '3': 100,
+                        '4': 100,
+                        '5': 100
+                    }
+                },
+                { 
+                    id: 'KonsTime', 
+                    name: 'Konsulent tjenester man-fre 08-16 (timepris)', 
+                    otc: 1200,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 				
+                    id: 'KonsTime2', 
+                    name: 'Konsulent tjenester man-fre 16-20 (timepris)', 
+                    otc: 1800,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 			
+                    id: 'KonsTime3', 
+                    name: 'Konsulent tjenester man-fre 20-08 (timepris)', 
+                    otc: 2400,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 			
+                    id: 'KonsTime4', 
+                    name: 'Konsulent tjenester lør-søn/helg 08-16 (timepris)', 
+                    otc: 2400,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 			
+                    id: 'KonsTime4', 
+                    name: 'Konsulent tjenester lør-søn/helg 16-20 (timepris)', 
+                    otc: 3600,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                },
+                { 		
+                    id: 'KonsTime5', 
+                    name: 'Konsulent tjenester lør-søn/helg 20-08 (timepris)', 
+                    otc: 4800,
+                    mrc: {
+                        '3': 0,
+                        '4': 0,
+                        '5': 0
+                    }
+                }
+            ]
+        };
+
+        // SLA pricing data
+        const sla = {
+            'Gold24': {
+                percentage: '99.90 %',
+                hrs: 'Kontinuerlig, 24/365',
+                mrc: {
+                    '3': 30,
+                    '4': 30,
+                    '5': 30
+                }
+            },
+            'Gold': {
+                percentage: '99.90 %',
+                hrs: 'Alle dager, 07-23',
+                mrc: {
+                    '3': 20,
+                    '4': 20,
+                    '5': 20
+                }
+            },
+            'Silver24': {
+                percentage: '99.75 %',
+                hrs: 'Kontinuerlig, 24/365',
+                mrc: {
+                    '3': 25,
+                    '4': 25,
+                    '5': 25
+                }
+            },
+            'Silver': {
+                percentage: '99.75 %',
+                hrs: 'Alle dager, 07-23',
+                mrc: {
+                    '3': 15,
+                    '4': 15,
+                    '5': 15
+                }
+            },
+            'Bronze': {
+                percentage: '99.50 %',
+                hrs: 'Alle dager, 07-23',
+                mrc: {
+                    '3': 10,
+                    '4': 10,
+                    '5': 10
+                }
+            },
+            'Basic': {
+                percentage: 'N/A',
+                hrs: '08-16, mandag-fredag',
+                mrc: {
+                    '3': 0,
+                    '4': 0,
+                    '5': 0
+                }
+            }
+        };
+
+        // Setup event listeners
+        document.getElementById('add-smartfiber').addEventListener('click', addSmartFiberRow);
+        document.getElementById('add-switch').addEventListener('click', () => addRow('switches'));
+        document.getElementById('add-wifi').addEventListener('click', () => addRow('wifi'));
+        document.getElementById('add-service').addEventListener('click', () => addRow('services'));
+        document.getElementById('clear-cart').addEventListener('click', clearCart);
+
+        // Function to generate SmartFiber dropdown options
+        function getSmartFiberOptions() {
+            let options = '<option value="">Select a SmartFiber product</option>';
+            
+            // Group products by speed
+            const speedGroups = {};
+            smartFiberProducts.forEach(product => {
+                if (!speedGroups[product.speed]) {
+                    speedGroups[product.speed] = [];
+                }
+                speedGroups[product.speed].push(product);
+            });
+            
+            // Create option groups by speed
+            for (const speed in speedGroups) {
+                options += `<optgroup label="SmartFiber ${speed} Mbps">`;
+                speedGroups[speed].forEach(product => {
+                    options += `<option value="${product.speed}-${product.contract}" data-speed="${product.speed}" data-contract="${product.contract}" data-mrc="${product.mrc}" data-otc="${product.otc}">SmartFiber ${product.speed} Mbps - ${product.contract} months</option>`;
+                });
+                options += '</optgroup>';
+            }
+            
+            return options;
+        }
+
+        // Function to add SmartFiber row
+        function addSmartFiberRow() {
+            const tbody = document.getElementById('smartfiber-body');
+            const tr = document.createElement('tr');
+            
+            const options = getSmartFiberOptions();
+            
+            tr.innerHTML = `
+                <td class="smartfiber-dropdown">
+                    <select class="smartfiber-select" onchange="updateSmartFiberPrice(this)">
+                        ${options}
+                    </select>
+                </td>
+                <td class="contract-period">-</td>
+                <td>
+                    <input type="number" class="mrc-input" min="0" step="1" onchange="updateSmartFiberTotal(this)">
+                </td>
+                <td>
+                    <input type="number" class="otc-input" min="0" step="1" onchange="updateSmartFiberTotal(this)">
+                </td>
+                <td>
+                    <button class="remove-btn" onclick="removeSmartFiberRow(this)">Remove</button>
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+
+        // Function to update SmartFiber price when product is selected
+        function updateSmartFiberPrice(selectElement) {
+            const row = selectElement.closest('tr');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            
+            if (selectedOption.value) {
+                const mrcInput = row.querySelector('.mrc-input');
+                const otcInput = row.querySelector('.otc-input');
+                const contractCell = row.querySelector('.contract-period');
+                
+                const contract = selectedOption.dataset.contract;
+                const mrc = parseInt(selectedOption.dataset.mrc);
+                const otc = parseInt(selectedOption.dataset.otc);
+                
+                contractCell.textContent = contract;
+                mrcInput.value = mrc;
+                otcInput.value = otc;
+                
+                updateSmartFiberTotal(mrcInput);
+            }
+        }
+
+        // Function to update SmartFiber totals when price is changed
+        function updateSmartFiberTotal(inputElement) {
+            updateSmartFiberSummary();
+        }
+
+        // Function to remove SmartFiber row
+        function removeSmartFiberRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            updateSmartFiberSummary();
+        }
+
+        // Function to update SmartFiber summary
+        function updateSmartFiberSummary() {
+            const smartFiberRows = document.querySelectorAll('#smartfiber-body tr');
+            let smartFiberCount = 0;
+            let smartFiberTotalOtc = 0;
+            let smartFiberTotalMrc = 0;
+            
+            smartFiberRows.forEach(row => {
+                const select = row.querySelector('.smartfiber-select');
+                if (select && select.value) {
+                    smartFiberCount++;
+                    const mrcInput = row.querySelector('.mrc-input');
+                    const otcInput = row.querySelector('.otc-input');
+                    
+                    if (mrcInput.value) {
+                        smartFiberTotalMrc += parseFloat(mrcInput.value);
+                    }
+                    
+                    if (otcInput.value) {
+                        smartFiberTotalOtc += parseFloat(otcInput.value);
+                    }
+                }
+            });
+            
+            document.getElementById('smartfiber-count').textContent = smartFiberCount;
+            document.getElementById('smartfiber-total-otc').textContent = smartFiberTotalOtc.toFixed(0);
+            document.getElementById('smartfiber-total-mrc').textContent = smartFiberTotalMrc.toFixed(0);
+            
+            // Show/hide SmartFiber row in summary
+            if (smartFiberCount > 0) {
+                document.getElementById('smartfiber-summary-row').classList.remove('hidden');
+            } else {
+                document.getElementById('smartfiber-summary-row').classList.add('hidden');
+            }
+            
+            updateGrandTotal();
+            updateShoppingCart();
+        }
+
+        // Function to count total devices (switches + APs)
+        function countTotalDevices() {
+            let totalDevices = 0;
+            
+            // Count switches
+            const switchesRows = document.querySelectorAll('#switches-body tr');
+            switchesRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    totalDevices += quantity;
+                }
+            });
+            
+            // Count WiFi APs
+            const wifiRows = document.querySelectorAll('#wifi-body tr');
+            wifiRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    totalDevices += quantity;
+                }
+            });
+            
+            return totalDevices;
+        }
+
+        // Function to count Wi-Fi access points
+        function countWifiAccessPoints() {
+            let totalWifi = 0;
+            
+            // Count WiFi APs
+            const wifiRows = document.querySelectorAll('#wifi-body tr');
+            wifiRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    totalWifi += quantity;
+                }
+            });
+            
+            return totalWifi;
+        }
+
+        // Function to update SLA selection
+        function updateSLA() {
+            const slaSelect = document.getElementById('sla-select');
+            const selectedSLA = slaSelect.value;
+            const contractLength = document.getElementById('contract-length').value;
+            const totalDevices = countTotalDevices();
+            
+            if (selectedSLA) {
+                document.getElementById('sla-availability').textContent = sla[selectedSLA].percentage;
+                document.getElementById('sla-hours').textContent = sla[selectedSLA].hrs;
+                document.getElementById('sla-quantity').textContent = totalDevices;
+                
+                const pricePerUnit = sla[selectedSLA].mrc[contractLength];
+                document.getElementById('sla-price').textContent = pricePerUnit;
+                document.getElementById('sla-total').textContent = (pricePerUnit * totalDevices).toFixed(0);
+                
+                document.getElementById('sla-count').textContent = totalDevices;
+                document.getElementById('sla-total-otc').textContent = '0';
+                document.getElementById('sla-total-mrc').textContent = (pricePerUnit * totalDevices).toFixed(0);
+                
+                // Show SLA row in summary
+                document.getElementById('sla-summary-row').classList.remove('hidden');
+            } else {
+                clearSLA();
+            }
+            
+            updateSummary();
+        }
+
+        // Function to update traffic statistics quantity
+        function updateTrafficStatistics() {
+            const wifiCount = countWifiAccessPoints();
+            const mrcPerUnit = 20; // MRC per unit for traffic statistics
+            
+            document.getElementById('traffic-analysis-quantity').textContent = wifiCount;
+            document.getElementById('traffic-analysis-total').textContent = (wifiCount * mrcPerUnit).toFixed(0);
+            
+            // Update traffic statistics in summary
+            document.getElementById('traffic-count').textContent = wifiCount;
+            document.getElementById('traffic-total-otc').textContent = '0';
+            document.getElementById('traffic-total-mrc').textContent = (wifiCount * mrcPerUnit).toFixed(0);
+            
+            // Show/hide the traffic row in summary based on count
+            if (wifiCount > 0) {
+                document.getElementById('traffic-summary-row').classList.remove('hidden');
+            } else {
+                document.getElementById('traffic-summary-row').classList.add('hidden');
+            }
+            
+            updateSummary();
+        }
+
+        // Function to clear SLA selection
+        function clearSLA() {
+            const slaSelect = document.getElementById('sla-select');
+            slaSelect.value = '';
+            document.getElementById('sla-availability').textContent = '-';
+            document.getElementById('sla-hours').textContent = '-';
+            document.getElementById('sla-quantity').textContent = '0';
+            document.getElementById('sla-price').textContent = '0';
+            document.getElementById('sla-total').textContent = '0';
+            document.getElementById('sla-count').textContent = '0';
+            document.getElementById('sla-total-otc').textContent = '0';
+            document.getElementById('sla-total-mrc').textContent = '0';
+            
+            // Hide SLA row in summary
+            document.getElementById('sla-summary-row').classList.add('hidden');
+            
+            updateSummary();
+        }
+
+        // Function to find product by ID
+        function findProduct(productId) {
+            for (const category in products) {
+                const foundProduct = products[category].find(p => p.id === productId);
+                if (foundProduct) {
+                    return {
+                        ...foundProduct,
+                        category
+                    };
+                }
+            }
+            return null;
+        }
+
+        // Function to add a new row
+        function addRow(type) {
+            const tbody = document.getElementById(`${type}-body`);
+            const tr = document.createElement('tr');
+            
+            let productOptions = '';
+            let dataSource;
+            
+            if (type === 'switches') {
+                dataSource = products.switches;
+            } else if (type === 'wifi') {
+                dataSource = products.wifiAP;
+            } else {
+                dataSource = products.services;
+            }
+            
+            dataSource.forEach(product => {
+                const contractLength = document.getElementById('contract-length').value;
+                const mrc = product.mrc[contractLength];
+                productOptions += `<option value="${product.id}" data-otc="${product.otc}" data-mrc-3="${product.mrc['3']}" data-mrc-4="${product.mrc['4']}" data-mrc-5="${product.mrc['5']}">${product.name}</option>`;
+            });
+            
+            tr.innerHTML = `
+                <td>
+                    <select class="product-select" onchange="updatePrice(this)">
+                        <option value="">Select a product</option>
+                        ${productOptions}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="quantity-input" value="1" min="1" onchange="updatePrice(this.parentNode.previousElementSibling.querySelector('select'))">
+                </td>
+                <td class="otc">0</td>
+                <td class="mrc">0</td>
+                <td class="total-otc">0</td>
+                <td class="total-mrc">0</td>
+                <td>
+                    <button class="remove-btn" onclick="removeRow(this)">Remove</button>
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+
+        // Function to update price when product is selected or quantity changes
+        function updatePrice(selectElement) {
+            const row = selectElement.closest('tr');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const otcCell = row.querySelector('.otc');
+            const mrcCell = row.querySelector('.mrc');
+            const totalOtcCell = row.querySelector('.total-otc');
+            const totalMrcCell = row.querySelector('.total-mrc');
+            const quantityInput = row.querySelector('.quantity-input');
+            
+            if (selectedOption.value) {
+                const contractLength = document.getElementById('contract-length').value;
+                const otc = parseFloat(selectedOption.dataset.otc);
+                const mrc = parseFloat(selectedOption.dataset[`mrc-${contractLength}`]);
+                const quantity = parseInt(quantityInput.value);
+                
+                otcCell.textContent = otc;
+                mrcCell.textContent = mrc;
+                totalOtcCell.textContent = (otc * quantity).toFixed(0);
+                totalMrcCell.textContent = (mrc * quantity).toFixed(0);
+            } else {
+                otcCell.textContent = '0';
+                mrcCell.textContent = '0';
+                totalOtcCell.textContent = '0';
+                totalMrcCell.textContent = '0';
+            }
+            
+            // Update SLA and Traffic Statistics based on device counts
+            updateSLA();
+            updateTrafficStatistics();
+            updateSummary();
+        }
+
+        // Function to update all prices when contract length changes
+        function updateAllPrices() {
+            const contractLength = document.getElementById('contract-length').value;
+            
+            // Update switches
+            const switchSelects = document.querySelectorAll('#switches-body .product-select');
+            switchSelects.forEach(select => updatePrice(select));
+            
+            // Update WiFi APs
+            const wifiSelects = document.querySelectorAll('#wifi-body .product-select');
+            wifiSelects.forEach(select => updatePrice(select));
+            
+            // Update services
+            const serviceSelects = document.querySelectorAll('#services-body .product-select');
+            serviceSelects.forEach(select => updatePrice(select));
+            
+            // Update SLA
+            updateSLA();
+            
+            // Update Traffic Statistics
+            updateTrafficStatistics();
+            
+            updateSummary();
+        }
+
+        // Function to remove a row
+        function removeRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            
+            // Update SLA and Traffic Statistics based on device counts
+            updateSLA();
+            updateTrafficStatistics();
+            updateSummary();
+        }
+
+        // Function to clear the cart
+        function clearCart() {
+            // Clear smartfiber
+            document.getElementById('smartfiber-body').innerHTML = '';
+            
+            // Clear switches
+            document.getElementById('switches-body').innerHTML = '';
+            
+            // Clear WiFi APs
+            document.getElementById('wifi-body').innerHTML = '';
+            
+            // Clear services
+            document.getElementById('services-body').innerHTML = '';
+            
+            // Clear SLA
+            clearSLA();
+            
+            // Add one empty row of each type
+            addSmartFiberRow();
+            addRow('switches');
+            addRow('wifi');
+            addRow('services');
+            
+            // Update Traffic Statistics
+            updateTrafficStatistics();
+            
+            updateSmartFiberSummary();
+            updateSummary();
+        }
+
+        // Function to update the summary
+        function updateSummary() {
+            // Switches
+            const switchesRows = document.querySelectorAll('#switches-body tr');
+            let switchesCount = 0;
+            let switchesTotalOtc = 0;
+            let switchesTotalMrc = 0;
+            
+            switchesRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    const totalOtc = parseFloat(row.querySelector('.total-otc').textContent) || 0;
+                    const totalMrc = parseFloat(row.querySelector('.total-mrc').textContent) || 0;
+                    switchesCount += quantity;
+                    switchesTotalOtc += totalOtc;
+                    switchesTotalMrc += totalMrc;
+                }
+            });
+            
+            document.getElementById('switches-count').textContent = switchesCount;
+            document.getElementById('switches-total-otc').textContent = switchesTotalOtc.toFixed(0);
+            document.getElementById('switches-total-mrc').textContent = switchesTotalMrc.toFixed(0);
+            
+            // Show/hide switches row in summary
+            if (switchesCount > 0) {
+                document.getElementById('switches-summary-row').classList.remove('hidden');
+            } else {
+                document.getElementById('switches-summary-row').classList.add('hidden');
+            }
+            
+            // Wi-Fi Access Points
+            const wifiRows = document.querySelectorAll('#wifi-body tr');
+            let wifiCount = 0;
+            let wifiTotalOtc = 0;
+            let wifiTotalMrc = 0;
+            
+            wifiRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    const totalOtc = parseFloat(row.querySelector('.total-otc').textContent) || 0;
+                    const totalMrc = parseFloat(row.querySelector('.total-mrc').textContent) || 0;
+                    wifiCount += quantity;
+                    wifiTotalOtc += totalOtc;
+                    wifiTotalMrc += totalMrc;
+                }
+            });
+            
+            document.getElementById('wifi-count').textContent = wifiCount;
+            document.getElementById('wifi-total-otc').textContent = wifiTotalOtc.toFixed(0);
+            document.getElementById('wifi-total-mrc').textContent = wifiTotalMrc.toFixed(0);
+            
+            // Show/hide WiFi row in summary
+            if (wifiCount > 0) {
+                document.getElementById('wifi-summary-row').classList.remove('hidden');
+            } else {
+                document.getElementById('wifi-summary-row').classList.add('hidden');
+            }
+            
+            // SLA is handled in updateSLA function
+            
+            // Services
+            const servicesRows = document.querySelectorAll('#services-body tr');
+            let servicesCount = 0;
+            let servicesTotalOtc = 0;
+            let servicesTotalMrc = 0;
+            
+            servicesRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    const totalOtc = parseFloat(row.querySelector('.total-otc').textContent) || 0;
+                    const totalMrc = parseFloat(row.querySelector('.total-mrc').textContent) || 0;
+                    servicesCount += quantity;
+                    servicesTotalOtc += totalOtc;
+                    servicesTotalMrc += totalMrc;
+                }
+            });
+            
+            document.getElementById('services-count').textContent = servicesCount;
+            document.getElementById('services-total-otc').textContent = servicesTotalOtc.toFixed(0);
+            document.getElementById('services-total-mrc').textContent = servicesTotalMrc.toFixed(0);
+            
+            // Show/hide services row in summary
+            if (servicesCount > 0) {
+                document.getElementById('services-summary-row').classList.remove('hidden');
+            } else {
+                document.getElementById('services-summary-row').classList.add('hidden');
+            }
+            
+            // Traffic Statistics is handled in updateTrafficStatistics function
+            const trafficStatisticsCount = parseInt(document.getElementById('traffic-analysis-quantity').textContent) || 0;
+            const trafficStatisticsMrc = trafficStatisticsCount * 20;
+            
+            updateGrandTotal();
+            updateShoppingCart();
+        }
+        
+        // Function to update grand totals
+        function updateGrandTotal() {
+            // Get all totals
+            const smartFiberTotalOtc = parseFloat(document.getElementById('smartfiber-total-otc').textContent) || 0;
+            const smartFiberTotalMrc = parseFloat(document.getElementById('smartfiber-total-mrc').textContent) || 0;
+            
+            const switchesTotalOtc = parseFloat(document.getElementById('switches-total-otc').textContent) || 0;
+            const switchesTotalMrc = parseFloat(document.getElementById('switches-total-mrc').textContent) || 0;
+            
+            const wifiTotalOtc = parseFloat(document.getElementById('wifi-total-otc').textContent) || 0;
+            const wifiTotalMrc = parseFloat(document.getElementById('wifi-total-mrc').textContent) || 0;
+            
+            const slaTotal = parseFloat(document.getElementById('sla-total-mrc').textContent) || 0;
+            
+            const servicesTotalOtc = parseFloat(document.getElementById('services-total-otc').textContent) || 0;
+            const servicesTotalMrc = parseFloat(document.getElementById('services-total-mrc').textContent) || 0;
+            
+            const trafficStatisticsCount = parseInt(document.getElementById('traffic-analysis-quantity').textContent) || 0;
+            const trafficStatisticsMrc = trafficStatisticsCount * 20;
+            
+            // Calculate grand totals
+            const grandTotalOtc = smartFiberTotalOtc + switchesTotalOtc + wifiTotalOtc + servicesTotalOtc;
+            const grandTotalMrc = smartFiberTotalMrc + switchesTotalMrc + wifiTotalMrc + slaTotal + servicesTotalMrc + trafficStatisticsMrc;
+            
+            // Update display
+            document.getElementById('grand-total-otc').textContent = grandTotalOtc.toFixed(0);
+            document.getElementById('grand-total-mrc').textContent = grandTotalMrc.toFixed(0);
+        }
+        
+        // Function to update the shopping cart details
+        function updateShoppingCart() {
+            const cartContainer = document.getElementById('cart-items-container');
+            cartContainer.innerHTML = '';
+            const contractLength = document.getElementById('contract-length').value;
+            
+            // Add items to cart
+            let hasItems = false;
+            
+            // SmartFiber section
+            const smartFiberRows = document.querySelectorAll('#smartfiber-body tr');
+            let hasSmartFiber = false;
+            
+            smartFiberRows.forEach(row => {
+                const select = row.querySelector('.smartfiber-select');
+                if (select && select.value) {
+                    if (!hasSmartFiber) {
+                        const categoryHeading = document.createElement('div');
+                        categoryHeading.className = 'category-heading';
+                        categoryHeading.textContent = 'SmartFiber';
+                        cartContainer.appendChild(categoryHeading);
+                        hasSmartFiber = true;
+                        hasItems = true;
+                    }
+                    
+                    const selectedOption = select.options[select.selectedIndex];
+                    const mrcInput = row.querySelector('.mrc-input');
+                    const otcInput = row.querySelector('.otc-input');
+                    const speed = selectedOption.dataset.speed;
+                    const contract = selectedOption.dataset.contract;
+                    const mrc = parseFloat(mrcInput.value) || 0;
+                    const otc = parseFloat(otcInput.value) || 0;
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <span class="item-name">SmartFiber ${speed} Mbps (${contract} months)</span>
+                        <span class="item-price">MRC: ${mrc} kr</span><br>
+                        <span class="item-details">OTC: ${otc} kr</span>
+                    `;
+                    
+                    cartContainer.appendChild(cartItem);
+                }
+            });
+            
+            // Switches section
+            const switchesRows = document.querySelectorAll('#switches-body tr');
+            let hasSwitches = false;
+            
+            switchesRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    if (!hasSwitches) {
+                        const categoryHeading = document.createElement('div');
+                        categoryHeading.className = 'category-heading';
+                        categoryHeading.textContent = 'Managed LAN Switches';
+                        cartContainer.appendChild(categoryHeading);
+                        hasSwitches = true;
+                        hasItems = true;
+                    }
+                    
+                    const productId = select.value;
+                    const product = findProduct(productId);
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    const otc = parseFloat(row.querySelector('.otc').textContent);
+                    const mrc = parseFloat(row.querySelector('.mrc').textContent);
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <span class="item-name">${quantity}x ${product.name}</span>
+                        <span class="item-price">MRC: ${mrc} kr</span><br>
+                        <span class="item-details">OTC: ${otc} kr</span>
+                    `;
+                    
+                    cartContainer.appendChild(cartItem);
+                }
+            });
+            
+            // WiFi APs section
+            const wifiRows = document.querySelectorAll('#wifi-body tr');
+            let hasWifi = false;
+            
+            wifiRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    if (!hasWifi) {
+                        const categoryHeading = document.createElement('div');
+                        categoryHeading.className = 'category-heading';
+                        categoryHeading.textContent = 'Managed Wi-Fi Access Points';
+                        cartContainer.appendChild(categoryHeading);
+                        hasWifi = true;
+                        hasItems = true;
+                    }
+                    
+                    const productId = select.value;
+                    const product = findProduct(productId);
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    const otc = parseFloat(row.querySelector('.otc').textContent);
+                    const mrc = parseFloat(row.querySelector('.mrc').textContent);
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <span class="item-name">${quantity}x ${product.name}</span>
+                        <span class="item-price">MRC: ${mrc} kr</span><br>
+                        <span class="item-details">OTC: ${otc} kr</span>
+                    `;
+                    
+                    cartContainer.appendChild(cartItem);
+                }
+            });
+            
+            // SLA section
+            const slaSelect = document.getElementById('sla-select');
+            if (slaSelect.value) {
+                const categoryHeading = document.createElement('div');
+                categoryHeading.className = 'category-heading';
+                categoryHeading.textContent = 'SLA (Service Level Agreement)';
+                cartContainer.appendChild(categoryHeading);
+                hasItems = true;
+                
+                const slaLevel = slaSelect.value;
+                const pricePerUnit = sla[slaLevel].mrc[contractLength];
+                const totalDevices = countTotalDevices();
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span class="item-name">${totalDevices}x ${slaLevel} SLA</span>
+                    <span class="item-price">MRC: ${pricePerUnit * totalDevices} kr</span><br>
+                    <span class="item-details">Availability: ${sla[slaLevel].percentage}, Hours: ${sla[slaLevel].hrs}</span>
+                `;
+                
+                cartContainer.appendChild(cartItem);
+            }
+            
+            // Traffic Statistics section (if any Wi-Fi APs)
+            const trafficStatisticsCount = parseInt(document.getElementById('traffic-analysis-quantity').textContent);
+            if (trafficStatisticsCount > 0) {
+                const categoryHeading = document.createElement('div');
+                categoryHeading.className = 'category-heading';
+                categoryHeading.textContent = 'Trafikkstatistikk';
+                cartContainer.appendChild(categoryHeading);
+                hasItems = true;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span class="item-name">${trafficStatisticsCount}x Trafikkstatistikk</span>
+                    <span class="item-price">MRC: ${trafficStatisticsCount * 20} kr</span><br>
+                    <span class="item-details">Automatically added for each Wi-Fi access point</span>
+                `;
+                
+                cartContainer.appendChild(cartItem);
+            }
+            
+            // Services section
+            const servicesRows = document.querySelectorAll('#services-body tr');
+            let hasServices = false;
+            
+            servicesRows.forEach(row => {
+                const select = row.querySelector('.product-select');
+                if (select && select.value) {
+                    if (!hasServices) {
+                        const categoryHeading = document.createElement('div');
+                        categoryHeading.className = 'category-heading';
+                        categoryHeading.textContent = 'Additional Services';
+                        cartContainer.appendChild(categoryHeading);
+                        hasServices = true;
+                        hasItems = true;
+                    }
+                    
+                    const productId = select.value;
+                    const product = findProduct(productId);
+                    const quantity = parseInt(row.querySelector('.quantity-input').value);
+                    const otc = parseFloat(row.querySelector('.otc').textContent);
+                    const mrc = parseFloat(row.querySelector('.mrc').textContent);
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <span class="item-name">${quantity}x ${product.name}</span>
+                        <span class="item-price">MRC: ${mrc} kr</span><br>
+                        <span class="item-details">OTC: ${otc} kr</span>
+                    `;
+                    
+                    cartContainer.appendChild(cartItem);
+                }
+            });
+            
+            // Add contract details
+            if (hasItems) {
+                const contractInfo = document.createElement('div');
+                contractInfo.className = 'category-heading';
+                contractInfo.style.marginTop = "20px";
+                contractInfo.textContent = `Contract Length: ${contractLength} Years`;
+                cartContainer.appendChild(contractInfo);
+            } else {
+                cartContainer.innerHTML = '<div class="cart-item">No items added to the cart yet</div>';
+            }
+        }
+
+        // Initialize with one row of each type
+        addSmartFiberRow();
+        addRow('switches');
+        addRow('wifi');
+        addRow('services');
+        
+        // Initial update for traffic statistics
+        updateTrafficStatistics();
+    </script>
+
+
+</body></html>
